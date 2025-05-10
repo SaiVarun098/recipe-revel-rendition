@@ -146,10 +146,10 @@ export default function Navbar() {
                     <Avatar className="h-8 w-8">
                       <AvatarImage
                         src="/placeholder.svg"
-                        alt={user?.displayName || "User"}
+                        alt={user?.username || "User"}
                       />
                       <AvatarFallback>
-                        {user?.displayName?.charAt(0) || "U"}
+                        {user?.username?.charAt(0) || "U"}
                       </AvatarFallback>
                     </Avatar>
                   </Button>

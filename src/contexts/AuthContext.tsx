@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { toast } from 'sonner';
 
@@ -6,6 +5,7 @@ interface User {
   id: string;
   username: string;
   email: string;
+  displayName?: string; // Added displayName property as optional
 }
 
 interface AuthContextType {
@@ -53,9 +53,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
         if (foundUser) {
           const { password, ...userWithoutPassword } = foundUser;
-          setUser(userWithoutPassword);
+          // Set displayName to username if not present
+          const userWithDisplayName = {
+            ...userWithoutPassword,
+            displayName: userWithoutPassword.username
+          };
+          setUser(userWithDisplayName);
           setIsAuthenticated(true);
-          localStorage.setItem('recipehub_user', JSON.stringify(userWithoutPassword));
+          localStorage.setItem('recipehub_user', JSON.stringify(userWithDisplayName));
           toast.success('Login successful!');
           resolve();
         } else {
@@ -85,9 +90,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           mockUsers.push(newUser);
           
           const { password: _, ...userWithoutPassword } = newUser;
-          setUser(userWithoutPassword);
+          // Add displayName property
+          const userWithDisplayName = {
+            ...userWithoutPassword,
+            displayName: username
+          };
+          setUser(userWithDisplayName);
           setIsAuthenticated(true);
-          localStorage.setItem('recipehub_user', JSON.stringify(userWithoutPassword));
+          localStorage.setItem('recipehub_user', JSON.stringify(userWithDisplayName));
           toast.success('Registration successful!');
           resolve();
         }

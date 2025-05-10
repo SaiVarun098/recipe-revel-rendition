@@ -162,8 +162,8 @@ export default function CreateRecipe() {
         ingredients,
         instructions,
         createdBy: user!.id,
-        chefName: user!.displayName || "Anonymous Chef", // Use displayName instead of name
-        collaborators: [], // Will be populated via addCollaborator API
+        chefName: user!.username || "Anonymous Chef", // Use username instead of displayName
+        collaborators, // Will be populated via addCollaborator API
         isPublic: true,
         image: imageUrl || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c",
       };
