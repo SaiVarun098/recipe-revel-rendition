@@ -1,4 +1,3 @@
-
 # RecipeHub: Social Recipe Sharing Platform
 
 ## Project Overview
