@@ -28,6 +28,7 @@ import Register from "./pages/auth/Register";
 
 // User Pages
 import ProfilePage from "./pages/user/ProfilePage";
+import DashboardPage from "./pages/user/DashboardPage";
 
 // Info Pages
 import AboutPage from "./pages/info/AboutPage";
@@ -65,6 +66,7 @@ const App = () => (
                 
                 {/* User Pages */}
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/dashboard" element={<DashboardPage />} />
                 
                 {/* Info Pages */}
                 <Route path="/about" element={<AboutPage />} />
