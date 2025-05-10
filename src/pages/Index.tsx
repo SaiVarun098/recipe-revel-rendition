@@ -141,6 +141,7 @@ export default function HomePage() {
                 cookTime={recipe.cookTime}
                 tags={recipe.tags}
                 image={recipe.image}
+                chefName={recipe.chefName || "Anonymous Chef"}
               />
             ))}
           </div>

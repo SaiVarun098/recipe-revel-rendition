@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -19,7 +18,7 @@ import {
   Pencil,
   Trash2,
   AlertTriangle,
-  Chef,
+  ChefHat,
 } from "lucide-react";
 import { useRecipe } from "@/contexts/RecipeContext";
 import { useAuth } from "@/contexts/AuthContext";

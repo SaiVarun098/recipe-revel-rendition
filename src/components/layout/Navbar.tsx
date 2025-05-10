@@ -5,7 +5,6 @@ import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuList,
-  NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import {
@@ -28,12 +27,12 @@ import { Search, Plus } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAuth } from "@/contexts/AuthContext";
-import useMobile from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const { isAuthenticated, user, logout } = useAuth();
-  const isMobile = useMobile();
+  const isMobile = useIsMobile();
 
   const form = useForm({
     defaultValues: {
@@ -133,7 +132,7 @@ export default function Navbar() {
               {!isMobile && (
                 <Button asChild variant="default">
                   <Link to="/create" className="flex items-center gap-1">
-                    Create<Plus className="h-4 w-4" />
+                    Create+
                   </Link>
                 </Button>
               )}
@@ -147,10 +146,10 @@ export default function Navbar() {
                     <Avatar className="h-8 w-8">
                       <AvatarImage
                         src="/placeholder.svg"
-                        alt={user?.name || "User"}
+                        alt={user?.displayName || "User"}
                       />
                       <AvatarFallback>
-                        {user?.name?.charAt(0) || "U"}
+                        {user?.displayName?.charAt(0) || "U"}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
@@ -172,7 +171,7 @@ export default function Navbar() {
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
                         <Link to="/create" className="flex items-center gap-1">
-                          Create<Plus className="h-4 w-4" />
+                          Create+
                         </Link>
                       </DropdownMenuItem>
                     </>
