@@ -13,7 +13,7 @@ export default function RecipesPage() {
   const { isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState("all");
   const [loginPromptOpen, setLoginPromptOpen] = useState(false);
-  const [recipesToView, setRecipesToView] = useState<string | null>(null);
+  const [recipeToView, setRecipeToView] = useState<string | null>(null);
 
   // Extract unique categories
   const categories = Array.from(
@@ -27,7 +27,7 @@ export default function RecipesPage() {
 
   const handleRecipeClick = (recipeId: string) => {
     if (!isAuthenticated) {
-      setRecipesToView(recipeId);
+      setRecipeToView(recipeId);
       setLoginPromptOpen(true);
       return false;
     }
@@ -63,6 +63,7 @@ export default function RecipesPage() {
           <RecipeList 
             recipes={filteredRecipes}
             emptyStateMessage={`No ${activeTab !== "all" ? activeTab.toLowerCase() : ""} recipes found`}
+            onRecipeClick={handleRecipeClick}
           />
         </TabsContent>
       </Tabs>

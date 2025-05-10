@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock, Heart } from "lucide-react";
+import { Clock, Heart, Chef } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRecipe } from "@/contexts/RecipeContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -18,10 +18,21 @@ interface RecipeCardProps {
   cookTime: number;
   tags: string[];
   image: string;
+  chefName: string; // Add chef name prop
   className?: string;
 }
 
-export function RecipeCard({ id, title, description, prepTime, cookTime, tags, image, className }: RecipeCardProps) {
+export function RecipeCard({ 
+  id, 
+  title, 
+  description, 
+  prepTime, 
+  cookTime, 
+  tags, 
+  image, 
+  chefName, // Include chef name
+  className 
+}: RecipeCardProps) {
   const { isRecipeSaved, saveRecipe, unsaveRecipe } = useRecipe();
   const { isAuthenticated } = useAuth();
   const [loginPromptOpen, setLoginPromptOpen] = useState(false);
@@ -75,6 +86,9 @@ export function RecipeCard({ id, title, description, prepTime, cookTime, tags, i
             <div className="flex items-center text-sm text-muted-foreground gap-2">
               <Clock className="h-4 w-4" />
               <span>{totalTime} mins</span>
+              
+              {/* Display chef name */}
+              <span className="ml-auto text-sm font-medium">by {chefName}</span>
             </div>
           </CardContent>
           

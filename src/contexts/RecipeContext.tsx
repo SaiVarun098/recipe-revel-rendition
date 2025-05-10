@@ -21,6 +21,7 @@ interface Recipe {
     timer?: number;
   }[];
   createdBy: string;
+  chefName: string; // Added chef name
   collaborators: string[];
   isPublic: boolean;
   image: string;
@@ -43,6 +44,7 @@ interface RecipeContextType {
   scaleIngredients: (recipe: Recipe, newServings: number) => Recipe['ingredients'];
   addCollaborator: (recipeId: string, collaboratorEmail: string) => Promise<boolean>;
   removeCollaborator: (recipeId: string, collaboratorId: string) => Promise<void>;
+  getChefNameById: (id: string) => string;
 }
 
 const RecipeContext = createContext<RecipeContextType | undefined>(undefined);
@@ -65,7 +67,7 @@ const mockRecipes: Recipe[] = [
       { name: 'Brown sugar', quantity: 0.75, unit: 'cup' },
       { name: 'Granulated sugar', quantity: 0.75, unit: 'cup' },
       { name: 'Vanilla extract', quantity: 1, unit: 'tsp' },
-      { name: 'Eggs', quantity: 2, unit: '' },
+      { name: 'Eggs', quantity: 2, unit: 'large' },
       { name: 'Chocolate chips', quantity: 2, unit: 'cups' }
     ],
     instructions: [
@@ -80,6 +82,7 @@ const mockRecipes: Recipe[] = [
       { step: 9, description: 'Allow cookies to cool on the baking sheet for 5 minutes before transferring to a wire rack to cool completely.', timer: 5 }
     ],
     createdBy: '1',
+    chefName: 'Chef Julia',
     collaborators: [],
     isPublic: true,
     image: 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e',
@@ -101,7 +104,7 @@ const mockRecipes: Recipe[] = [
       { name: 'Salt', quantity: 0.5, unit: 'tsp' },
       { name: 'Sugar', quantity: 2, unit: 'tbsp' },
       { name: 'Buttermilk', quantity: 1.5, unit: 'cups' },
-      { name: 'Eggs', quantity: 2, unit: '' },
+      { name: 'Eggs', quantity: 2, unit: 'large' },
       { name: 'Butter', quantity: 3, unit: 'tbsp' },
       { name: 'Vanilla extract', quantity: 1, unit: 'tsp' }
     ],
@@ -116,6 +119,7 @@ const mockRecipes: Recipe[] = [
       { step: 8, description: 'Serve warm with maple syrup, fresh berries, or whipped cream.' }
     ],
     createdBy: '2',
+    chefName: 'Chef Michael',
     collaborators: ['1'],
     isPublic: true,
     image: 'https://images.unsplash.com/photo-1575853121743-60c24f0a7502',
@@ -131,7 +135,7 @@ const mockRecipes: Recipe[] = [
     cookTime: 15,
     tags: ['Italian', 'Dinner', 'Vegetarian'],
     ingredients: [
-      { name: 'Pizza dough', quantity: 1, unit: '' },
+      { name: 'Pizza dough', quantity: 1, unit: 'ball' },
       { name: 'Tomato sauce', quantity: 0.5, unit: 'cup' },
       { name: 'Fresh mozzarella', quantity: 8, unit: 'oz' },
       { name: 'Fresh basil leaves', quantity: 10, unit: '' },
@@ -151,6 +155,7 @@ const mockRecipes: Recipe[] = [
       { step: 9, description: 'Let cool for 3-5 minutes before slicing and serving.', timer: 3 }
     ],
     createdBy: '1',
+    chefName: 'Chef Julia',
     collaborators: [],
     isPublic: true,
     image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002',
@@ -159,7 +164,7 @@ const mockRecipes: Recipe[] = [
   }
 ];
 
-// Generate more mock recipes with descriptive names
+// More detailed mock recipes with specific ingredients and instructions
 const recipeNames = [
   'Spicy Thai Basil Chicken',
   'Creamy Mushroom Risotto',
@@ -180,6 +185,20 @@ const recipeNames = [
   'Lemon Blueberry Pancakes'
 ];
 
+// Sample chef names
+const chefNames = [
+  'Chef Julia', 
+  'Chef Michael', 
+  'Chef Sophia', 
+  'Chef David', 
+  'Chef Olivia',
+  'Chef Thomas',
+  'Chef Emma',
+  'Chef James',
+  'Chef Ava',
+  'Chef William'
+];
+
 // Adding more detailed recipes
 for (let i = 0; i < recipeNames.length; i++) {
   const categories = ['Italian', 'Mexican', 'Asian', 'American', 'Indian', 'French', 'Mediterranean', 'Baking'];
@@ -194,6 +213,7 @@ for (let i = 0; i < recipeNames.length; i++) {
   if (randomDiet) tags.push(randomDiet);
   
   const creator = Math.random() > 0.5 ? '1' : '2';
+  const chefName = chefNames[Math.floor(Math.random() * chefNames.length)];
   const servings = Math.floor(Math.random() * 6) + 2;
   const prepTime = Math.floor(Math.random() * 30) + 5;
   const cookTime = Math.floor(Math.random() * 60) + 10;
@@ -211,33 +231,28 @@ for (let i = 0; i < recipeNames.length; i++) {
     'photo-1476224203421-9ac39bcb3327'
   ];
 
-  // Generate 3-6 random ingredients
-  const ingredientCount = Math.floor(Math.random() * 4) + 3;
+  // Generate specific ingredients based on recipe type
   const ingredients = [];
+  const ingredientsList = getIngredientsForRecipe(recipeNames[i]);
   
-  for (let j = 0; j < ingredientCount; j++) {
-    const units = ['cups', 'tbsp', 'tsp', 'oz', 'lbs', ''];
+  for (let j = 0; j < ingredientsList.length; j++) {
     ingredients.push({
-      name: `Ingredient ${j + 1} for ${recipeNames[i]}`,
-      quantity: Math.random() * 3 + 0.25,
-      unit: units[Math.floor(Math.random() * units.length)]
+      name: ingredientsList[j].name,
+      quantity: ingredientsList[j].quantity,
+      unit: ingredientsList[j].unit
     });
   }
   
-  // Generate 3-6 random instructions
-  const instructionCount = Math.floor(Math.random() * 4) + 3;
-  const instructions = [];
-  
-  for (let j = 0; j < instructionCount; j++) {
-    const hasTimer = Math.random() > 0.6;
-    const timer = hasTimer ? Math.floor(Math.random() * 20) + 1 : undefined;
-    
-    instructions.push({
-      step: j + 1,
-      description: `Step ${j + 1}: Detailed instruction for making ${recipeNames[i]}. This step explains how to properly prepare this part of the recipe.`,
-      timer
-    });
-  }
+  // Generate specific instructions
+  const instructionsList = getInstructionsForRecipe(recipeNames[i]);
+  const instructions = instructionsList.map((desc, idx) => {
+    const hasTimer = desc.timer !== undefined;
+    return {
+      step: idx + 1,
+      description: desc.text,
+      timer: hasTimer ? desc.timer : undefined
+    };
+  });
   
   mockRecipes.push({
     id: String(i + 4),
@@ -250,12 +265,127 @@ for (let i = 0; i < recipeNames.length; i++) {
     ingredients,
     instructions,
     createdBy: creator,
+    chefName: chefName,
     collaborators: [],
     isPublic: true,
     image: `https://images.unsplash.com/${imageIds[Math.floor(Math.random() * imageIds.length)]}`,
     createdAt: new Date(2023, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString(),
     updatedAt: new Date(2023, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString()
   });
+}
+
+// Helper function to generate specific ingredients for recipes
+function getIngredientsForRecipe(recipeName: string) {
+  switch (recipeName) {
+    case 'Spicy Thai Basil Chicken':
+      return [
+        { name: 'Chicken breast', quantity: 1, unit: 'lb' },
+        { name: 'Thai basil leaves', quantity: 2, unit: 'cups' },
+        { name: 'Thai chilies', quantity: 4, unit: '' },
+        { name: 'Garlic cloves', quantity: 4, unit: '' },
+        { name: 'Fish sauce', quantity: 2, unit: 'tbsp' },
+        { name: 'Oyster sauce', quantity: 1, unit: 'tbsp' },
+        { name: 'Soy sauce', quantity: 1, unit: 'tbsp' },
+        { name: 'Brown sugar', quantity: 1, unit: 'tsp' },
+        { name: 'Vegetable oil', quantity: 2, unit: 'tbsp' }
+      ];
+    case 'Creamy Mushroom Risotto':
+      return [
+        { name: 'Arborio rice', quantity: 1.5, unit: 'cups' },
+        { name: 'Mixed mushrooms', quantity: 8, unit: 'oz' },
+        { name: 'Shallots', quantity: 2, unit: '' },
+        { name: 'Garlic cloves', quantity: 2, unit: '' },
+        { name: 'White wine', quantity: 0.5, unit: 'cup' },
+        { name: 'Vegetable broth', quantity: 4, unit: 'cups' },
+        { name: 'Parmesan cheese', quantity: 0.5, unit: 'cup' },
+        { name: 'Butter', quantity: 2, unit: 'tbsp' },
+        { name: 'Fresh thyme', quantity: 1, unit: 'tbsp' },
+        { name: 'Olive oil', quantity: 2, unit: 'tbsp' }
+      ];
+    case 'Vegetable Stir-Fry with Tofu':
+      return [
+        { name: 'Firm tofu', quantity: 14, unit: 'oz' },
+        { name: 'Broccoli', quantity: 1, unit: 'head' },
+        { name: 'Carrots', quantity: 2, unit: '' },
+        { name: 'Bell peppers', quantity: 2, unit: '' },
+        { name: 'Snow peas', quantity: 1, unit: 'cup' },
+        { name: 'Garlic', quantity: 3, unit: 'cloves' },
+        { name: 'Ginger', quantity: 1, unit: 'tbsp' },
+        { name: 'Soy sauce', quantity: 3, unit: 'tbsp' },
+        { name: 'Sesame oil', quantity: 1, unit: 'tsp' },
+        { name: 'Cornstarch', quantity: 1, unit: 'tbsp' },
+        { name: 'Vegetable oil', quantity: 2, unit: 'tbsp' }
+      ];
+    // Add more recipes as needed
+    default:
+      // Generic ingredients for other recipes
+      return [
+        { name: 'Main ingredient', quantity: 1, unit: 'lb' },
+        { name: 'Secondary ingredient', quantity: 2, unit: 'cups' },
+        { name: 'Spice 1', quantity: 1, unit: 'tsp' },
+        { name: 'Spice 2', quantity: 0.5, unit: 'tsp' },
+        { name: 'Liquid ingredient', quantity: 0.5, unit: 'cup' },
+        { name: 'Oil or butter', quantity: 2, unit: 'tbsp' },
+        { name: 'Garnish', quantity: 2, unit: 'tbsp' }
+      ];
+  }
+}
+
+// Helper function to generate specific instructions for recipes
+function getInstructionsForRecipe(recipeName: string) {
+  switch (recipeName) {
+    case 'Spicy Thai Basil Chicken':
+      return [
+        { text: 'Mince the garlic and Thai chilies.' },
+        { text: 'Cut the chicken into small bite-sized pieces.' },
+        { text: 'Heat oil in a wok or large skillet over high heat.', timer: 1 },
+        { text: 'Add garlic and chilies, stir-fry for 30 seconds until fragrant.', timer: 0.5 },
+        { text: 'Add chicken and stir-fry until no longer pink, about 3-4 minutes.', timer: 4 },
+        { text: 'Add fish sauce, oyster sauce, soy sauce, and brown sugar. Stir well.' },
+        { text: 'Toss in the Thai basil leaves and stir until wilted, about 30 seconds.', timer: 0.5 },
+        { text: 'Serve hot with steamed jasmine rice.' }
+      ];
+    case 'Creamy Mushroom Risotto':
+      return [
+        { text: 'Clean and slice mushrooms.' },
+        { text: 'Finely dice shallots and mince garlic.' },
+        { text: 'In a large pot, heat olive oil over medium heat and sauté mushrooms until browned, about 5 minutes.', timer: 5 },
+        { text: 'Remove mushrooms and set aside.' },
+        { text: 'In the same pot, add butter and sauté shallots until translucent, about 2-3 minutes.', timer: 3 },
+        { text: 'Add garlic and cook for 30 seconds.', timer: 0.5 },
+        { text: 'Add Arborio rice and stir to coat with butter for 1-2 minutes.', timer: 2 },
+        { text: 'Pour in white wine and stir until absorbed.', timer: 1 },
+        { text: 'Add warm broth one ladle at a time, stirring frequently and waiting until liquid is absorbed before adding more.', timer: 18 },
+        { text: 'When rice is creamy and al dente, stir in mushrooms, Parmesan cheese, and fresh thyme.' },
+        { text: 'Season with salt and pepper to taste. Serve immediately.' }
+      ];
+    case 'Vegetable Stir-Fry with Tofu':
+      return [
+        { text: 'Press tofu between paper towels with a heavy object for 30 minutes to remove excess water.', timer: 30 },
+        { text: 'Cut tofu into 1-inch cubes.' },
+        { text: 'Cut vegetables into bite-sized pieces.' },
+        { text: 'Mix soy sauce, 2 tbsp water, and cornstarch in a small bowl.' },
+        { text: 'Heat vegetable oil in a wok or large skillet over high heat.' },
+        { text: 'Add tofu and cook until golden brown on all sides, about 5-7 minutes.', timer: 7 },
+        { text: 'Remove tofu and set aside.' },
+        { text: 'Add a bit more oil if needed, then add garlic and ginger, stir-frying for 30 seconds.', timer: 0.5 },
+        { text: 'Add vegetables in order of cooking time: carrots first, then broccoli, bell peppers, and finally snow peas.' },
+        { text: 'Stir-fry for 3-5 minutes until vegetables are crisp-tender.', timer: 5 },
+        { text: 'Return tofu to the wok, then add sauce mixture and stir until thickened, about 1 minute.', timer: 1 },
+        { text: 'Drizzle with sesame oil, toss to combine, and serve immediately.' }
+      ];
+    // Add more recipes as needed
+    default:
+      return [
+        { text: 'Prepare all ingredients as described in the ingredients list.' },
+        { text: 'Heat cooking vessel over appropriate heat level.', timer: 2 },
+        { text: 'Cook main ingredients until properly done.', timer: 8 },
+        { text: 'Add secondary ingredients and continue cooking.', timer: 5 },
+        { text: 'Add seasonings and liquids as needed.' },
+        { text: 'Finish cooking until everything is properly cooked through.', timer: 3 },
+        { text: 'Serve hot with appropriate garnishes.' }
+      ];
+  }
 }
 
 export function RecipeProvider({ children }: { children: ReactNode }) {
@@ -284,6 +414,11 @@ export function RecipeProvider({ children }: { children: ReactNode }) {
 
   const getRecipeById = (id: string) => {
     return recipes.find(recipe => recipe.id === id);
+  };
+
+  const getChefNameById = (id: string) => {
+    const chef = recipes.find(recipe => recipe.createdBy === id);
+    return chef ? chef.chefName : "Unknown Chef";
   };
 
   const createRecipe = async (newRecipe: Omit<Recipe, 'id' | 'createdAt' | 'updatedAt'>) => {
@@ -391,7 +526,7 @@ export function RecipeProvider({ children }: { children: ReactNode }) {
     }));
   };
 
-  // New functions for collaboration
+  // Functions for collaboration
   const addCollaborator = async (recipeId: string, collaboratorEmail: string) => {
     return new Promise<boolean>((resolve, reject) => {
       setTimeout(() => {
@@ -484,7 +619,8 @@ export function RecipeProvider({ children }: { children: ReactNode }) {
       isRecipeSaved,
       scaleIngredients,
       addCollaborator,
-      removeCollaborator
+      removeCollaborator,
+      getChefNameById
     }}>
       {children}
     </RecipeContext.Provider>

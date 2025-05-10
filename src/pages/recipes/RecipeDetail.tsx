@@ -19,6 +19,7 @@ import {
   Pencil,
   Trash2,
   AlertTriangle,
+  Chef,
 } from "lucide-react";
 import { useRecipe } from "@/contexts/RecipeContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -63,6 +64,11 @@ export default function RecipeDetail() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      setLoginPromptOpen(true);
+      return;
+    }
+
     if (id) {
       const fetchedRecipe = getRecipeById(id);
       if (fetchedRecipe) {
@@ -76,7 +82,7 @@ export default function RecipeDetail() {
         }
       }
     }
-  }, [id, getRecipeById, user]);
+  }, [id, getRecipeById, user, isAuthenticated]);
 
   const handleServingsChange = (value: string) => {
     const newServings = parseInt(value, 10);
@@ -118,6 +124,29 @@ export default function RecipeDetail() {
     navigator.clipboard.writeText(window.location.href);
     toast.success("Link copied to clipboard");
   };
+
+  if (!isAuthenticated) {
+    return (
+      <Dialog open={loginPromptOpen} onOpenChange={() => navigate("/recipes")}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Sign in required</DialogTitle>
+            <DialogDescription>
+              You need to be signed in to view recipe details.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => navigate("/recipes")}>
+              Go Back
+            </Button>
+            <Button asChild>
+              <Link to="/login">Sign in</Link>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   if (!recipe) {
     return (
@@ -165,6 +194,12 @@ export default function RecipeDetail() {
           <div className="flex flex-col gap-4">
             <h1 className="text-3xl font-bold">{recipe.title}</h1>
             <p className="text-muted-foreground text-lg">{recipe.description}</p>
+            
+            {/* Display chef name */}
+            <div className="flex items-center gap-2 text-sm">
+              <span className="font-medium">Created by:</span>
+              <span className="text-muted-foreground">{recipe.chefName}</span>
+            </div>
             
             <div className="flex flex-wrap gap-2 my-3">
               {recipe.tags.map((tag: string) => (
@@ -245,6 +280,23 @@ export default function RecipeDetail() {
                 </Dialog>
               )}
             </div>
+
+            {/* Display collaborators if there are any */}
+            {recipe.collaborators && recipe.collaborators.length > 0 && (
+              <div className="mt-2">
+                <h3 className="text-sm font-medium mb-2 flex items-center gap-2">
+                  <Users className="h-4 w-4" />
+                  Collaborators
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {recipe.collaborators.map((collab: string) => (
+                    <Badge key={collab} variant="outline">
+                      Collaborator {collab.slice(0, 4)}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="relative rounded-lg overflow-hidden aspect-video">
@@ -354,25 +406,6 @@ export default function RecipeDetail() {
           </div>
         </div>
       </div>
-      
-      <Dialog open={loginPromptOpen} onOpenChange={setLoginPromptOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Sign in required</DialogTitle>
-            <DialogDescription>
-              You need to be signed in to save recipes to your collection.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setLoginPromptOpen(false)}>
-              Cancel
-            </Button>
-            <Button asChild onClick={() => setLoginPromptOpen(false)}>
-              <Link to="/login">Sign in</Link>
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
