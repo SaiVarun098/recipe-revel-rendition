@@ -40,9 +40,6 @@ export function Navbar() {
             <Link to="/recipes" className="text-sm font-medium transition-colors hover:text-recipe-primary">
               Recipes
             </Link>
-            <Link to="/featured" className="text-sm font-medium transition-colors hover:text-recipe-primary">
-              Featured
-            </Link>
             {isAuthenticated && (
               <Link to="/my-recipes" className="text-sm font-medium transition-colors hover:text-recipe-primary">
                 My Recipes
@@ -69,10 +66,10 @@ export function Navbar() {
 
           {isAuthenticated ? (
             <div className="flex items-center gap-4">
-              <Button asChild variant="ghost" size="icon" className="rounded-full">
+              <Button asChild variant="ghost" size="icon" className="flex items-center gap-2">
                 <Link to="/create">
                   <Plus className="h-5 w-5" />
-                  <span className="sr-only">Create Recipe</span>
+                  <span className="sr-only md:not-sr-only md:ml-2 md:text-sm">Create</span>
                 </Link>
               </Button>
 
@@ -146,10 +143,6 @@ export function Navbar() {
                 <Link to="/recipes" className="flex items-center gap-2 text-sm font-medium">
                   <BookOpen className="h-4 w-4" />
                   Recipes
-                </Link>
-                <Link to="/featured" className="flex items-center gap-2 text-sm font-medium">
-                  <Heart className="h-4 w-4" />
-                  Featured
                 </Link>
                 {isAuthenticated && (
                   <>

@@ -3,6 +3,8 @@ import { useSearchParams } from "react-router-dom";
 import { useRecipe } from "@/contexts/RecipeContext";
 import RecipeList from "@/components/recipes/RecipeList";
 import { Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 export default function SearchResults() {
   const [searchParams] = useSearchParams();
@@ -14,6 +16,18 @@ export default function SearchResults() {
     recipe.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
     recipe.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())) ||
     recipe.ingredients.some(ing => ing.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
+  const emptyStateMessage = (
+    <>
+      <p className="text-xl mb-4">
+        No chef has made a recipe for "{searchQuery}" in our collection yet.
+      </p>
+      <p className="mb-6">Would you like to be the first?</p>
+      <Button asChild>
+        <Link to="/create">Create Recipe</Link>
+      </Button>
+    </>
   );
 
   return (
@@ -31,7 +45,7 @@ export default function SearchResults() {
         
         <RecipeList
           recipes={filteredRecipes}
-          emptyStateMessage={`No recipes found matching "${searchQuery}"`}
+          emptyStateMessage={emptyStateMessage}
         />
       </div>
     </div>

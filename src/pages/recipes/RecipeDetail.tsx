@@ -59,6 +59,7 @@ export default function RecipeDetail() {
   const [isOwner, setIsOwner] = useState(false);
   const [isCollaborator, setIsCollaborator] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [loginPromptOpen, setLoginPromptOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -135,12 +136,7 @@ export default function RecipeDetail() {
   
   const toggleSave = () => {
     if (!isAuthenticated) {
-      toast.error("Please log in to save recipes", {
-        action: {
-          label: "Log in",
-          onClick: () => navigate("/login"),
-        },
-      });
+      setLoginPromptOpen(true);
       return;
     }
     
@@ -358,6 +354,25 @@ export default function RecipeDetail() {
           </div>
         </div>
       </div>
+      
+      <Dialog open={loginPromptOpen} onOpenChange={setLoginPromptOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Sign in required</DialogTitle>
+            <DialogDescription>
+              You need to be signed in to save recipes to your collection.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setLoginPromptOpen(false)}>
+              Cancel
+            </Button>
+            <Button asChild onClick={() => setLoginPromptOpen(false)}>
+              <Link to="/login">Sign in</Link>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

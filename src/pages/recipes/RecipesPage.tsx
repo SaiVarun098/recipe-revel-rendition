@@ -3,10 +3,17 @@ import { useState } from "react";
 import { useRecipe } from "@/contexts/RecipeContext";
 import RecipeList from "@/components/recipes/RecipeList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/contexts/AuthContext";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 export default function RecipesPage() {
   const { recipes } = useRecipe();
+  const { isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState("all");
+  const [loginPromptOpen, setLoginPromptOpen] = useState(false);
+  const [recipesToView, setRecipesToView] = useState<string | null>(null);
 
   // Extract unique categories
   const categories = Array.from(
@@ -17,6 +24,15 @@ export default function RecipesPage() {
   const filteredRecipes = activeTab === "all"
     ? recipes
     : recipes.filter((recipe) => recipe.tags.includes(activeTab));
+
+  const handleRecipeClick = (recipeId: string) => {
+    if (!isAuthenticated) {
+      setRecipesToView(recipeId);
+      setLoginPromptOpen(true);
+      return false;
+    }
+    return true;
+  };
 
   return (
     <div className="container py-10">
@@ -50,6 +66,25 @@ export default function RecipesPage() {
           />
         </TabsContent>
       </Tabs>
+
+      <Dialog open={loginPromptOpen} onOpenChange={setLoginPromptOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Sign in required</DialogTitle>
+            <DialogDescription>
+              You need to be signed in to view detailed recipe information.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setLoginPromptOpen(false)}>
+              Cancel
+            </Button>
+            <Button asChild onClick={() => setLoginPromptOpen(false)}>
+              <Link to="/login">Sign in</Link>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

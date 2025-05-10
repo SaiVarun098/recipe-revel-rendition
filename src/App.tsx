@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { RecipeProvider } from "@/contexts/RecipeContext";
 
@@ -16,7 +16,6 @@ import NotFound from "./pages/NotFound";
 
 // Recipe Pages
 import RecipesPage from "./pages/recipes/RecipesPage";
-import FeaturedRecipes from "./pages/recipes/FeaturedRecipes";
 import RecipeDetail from "./pages/recipes/RecipeDetail";
 import CreateRecipe from "./pages/recipes/CreateRecipe";
 import UserRecipes from "./pages/recipes/UserRecipes";
@@ -54,7 +53,7 @@ const App = () => (
                 {/* Recipe Pages */}
                 <Route path="/recipes" element={<RecipesPage />} />
                 <Route path="/recipes/:id" element={<RecipeDetail />} />
-                <Route path="/featured" element={<FeaturedRecipes />} />
+                <Route path="/featured" element={<Navigate to="/recipes" replace />} />
                 <Route path="/create" element={<CreateRecipe />} />
                 <Route path="/my-recipes" element={<UserRecipes />} />
                 <Route path="/saved" element={<SavedRecipes />} />
