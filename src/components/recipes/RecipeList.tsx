@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import RecipeCard from "./RecipeCard";
 import { Input } from "@/components/ui/input";
@@ -23,11 +22,12 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { ReactNode } from "react";
 
 interface RecipeListProps {
   title?: string;
   recipes: any[];
-  emptyStateMessage?: string;
+  emptyStateMessage?: string | ReactNode;
 }
 
 export function RecipeList({ title, recipes, emptyStateMessage }: RecipeListProps) {
