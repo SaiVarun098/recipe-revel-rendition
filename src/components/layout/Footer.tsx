@@ -1,6 +1,6 @@
 
 import { Link } from 'react-router-dom';
-import { ChefHat, Mail, GitHub, Twitter, Instagram, Facebook } from 'lucide-react';
+import { ChefHat, Mail, Github, Twitter, Instagram, Facebook } from 'lucide-react';
 
 export function Footer() {
   return (
@@ -79,7 +79,7 @@ export function Footer() {
               <span className="sr-only">Instagram</span>
             </a>
             <a href="#" className="text-muted-foreground hover:text-foreground">
-              <GitHub size={20} />
+              <Github size={20} />
               <span className="sr-only">GitHub</span>
             </a>
           </div>

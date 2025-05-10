@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import RecipeList from "@/components/recipes/RecipeList";
 import { Button } from "@/components/ui/button";
 import { Link, Navigate } from "react-router-dom";
+import React from "react";
 
 export default function SavedRecipes() {
   const { recipes, savedRecipes } = useRecipe();
@@ -14,6 +15,15 @@ export default function SavedRecipes() {
   }
 
   const savedRecipeObjects = recipes.filter(recipe => savedRecipes.includes(recipe.id));
+
+  const emptyState = (
+    <>
+      <p className="mb-4">You haven't saved any recipes yet.</p>
+      <Button asChild>
+        <Link to="/recipes">Browse Recipes</Link>
+      </Button>
+    </>
+  );
 
   return (
     <div className="container py-10">
@@ -27,14 +37,7 @@ export default function SavedRecipes() {
 
         <RecipeList
           recipes={savedRecipeObjects}
-          emptyStateMessage={
-            <>
-              <p className="mb-4">You haven't saved any recipes yet.</p>
-              <Button asChild>
-                <Link to="/recipes">Browse Recipes</Link>
-              </Button>
-            </>
-          }
+          emptyStateMessage={emptyState}
         />
       </div>
     </div>
